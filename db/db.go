@@ -54,4 +54,12 @@ type Students struct{
 	}
 	
  }
+
+func GetStudents()([]Students,error){
+	students := []Students{}
+
+	db:= Init()
+	err:= db.Find(&students).Error
+	return students,err
+} 
   

@@ -31,7 +31,11 @@ func main() {
 // Gerenciar  a rota do servidor
 // Função para listar todos os estudantes
 func getStudents(c echo.Context) error {
-	return c.String(http.StatusOK, "List of all students")
+	students,err := db.GetStudents()
+	if err != nil{
+		return c.String(http.StatusNotFound,"Failed to get students")
+	}
+	return c.JSON(http.StatusOK, students)
 }
 
 // Função para cadastrar um novo estudante
