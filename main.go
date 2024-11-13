@@ -28,35 +28,36 @@ func main() {
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
-
-
-
 // Gerenciar  a rota do servidor
-//Função para listar todos os estudantes
+// Função para listar todos os estudantes
 func getStudents(c echo.Context) error {
 	return c.String(http.StatusOK, "List of all students")
 }
 
-//Função para cadastrar um novo estudante
+// Função para cadastrar um novo estudante
 func createStudents(c echo.Context) error {
-	db.AddStudent()
-	return c.String(http.StatusOK, "Create students")
+	student := db.Students{}
+	if err := c.Bind(&student); err != nil {
+		return err
+	}
+	db.AddStudent(student)
+	return c.String(http.StatusOK, "Create students " )
 }
 
-//função para achar um determinado aluno
+// função para achar um determinado aluno
 func getStudent(c echo.Context) error {
-	id:= c.Param("id")
+	id := c.Param("id")
 	return c.String(http.StatusOK, "Get student by id: "+id)
 }
 
-//Função para atualizar as informações de uma aluno
+// Função para atualizar as informações de uma aluno
 func updateStudent(c echo.Context) error {
-	id:= c.Param("id")
+	id := c.Param("id")
 	return c.String(http.StatusOK, "Update student by id: "+id)
 }
 
-//Função para deletar um aluno
+// Função para deletar um aluno
 func deleteStudent(c echo.Context) error {
-	id:= c.Param("id")
+	id := c.Param("id")
 	return c.String(http.StatusOK, "Deletar student by id: "+id)
 }
