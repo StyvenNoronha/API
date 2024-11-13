@@ -11,8 +11,8 @@ Routes
 - DELETE /students/:id - deleta um estudante
 
 Informação de estuante:
-- name
-- CPF
-- Email
-- Age
-- Active
+- name (string)
+- CPF (int)
+- Email (string)
+- Age (int)
+- Active (bool)
