@@ -12,7 +12,7 @@ Routes
 
 Informação de estuante:
 - name
-  -CPF
-  -Email
-  -Age
-  -Active
+- CPF
+- Email
+- Age
+- Active
