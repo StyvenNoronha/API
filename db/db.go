@@ -33,7 +33,7 @@ type Students struct{
 	return db
  }
 
- func AddStudent(student Students){
+ func AddStudent(student Students) error{
 	db:= Init()
 /*
 	student := Students{
@@ -46,9 +46,12 @@ type Students struct{
 */
 	result:= db.Create(&student)
 	if result.Error != nil{
-		fmt.Println("Deu erro")
+		return result.Error
 	}else{
+		
 		fmt.Println("Deu tudo certo")
+		return nil
 	}
+	
  }
   
