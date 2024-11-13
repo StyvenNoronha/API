@@ -5,12 +5,10 @@ import (
 	"log"
 )
 
-
 func main() {
-	server:= api.NewServer()
+	server := api.NewServer()
 	server.ConfigureRoutes()
-	if err:= server.Start(); err != nil{
+	if err := server.Start(); err != nil {
 		log.Fatal(err)
 	}
 }
-

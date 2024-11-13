@@ -7,12 +7,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gorm.io/gorm"
+	
 )
 
 type API struct {
 	Echo *echo.Echo
-	DB   *gorm.DB
+	DB   *db.StudentHandler
 }
 
 func NewServer() *API {
@@ -22,22 +22,25 @@ func NewServer() *API {
 	//Camada intermediária de comunicação
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	db := db.Init()
+
+	database := db.Init()
+	studentDB := db.NewStudentHandler(database)
+
 	return &API{
 		Echo: e,
-		DB:   db,
+		DB:   studentDB,
 	}
 
 }
 
 func (api *API) ConfigureRoutes() {
 	// lista de Rotas
-	api.Echo.GET("/students", getStudents)
-	api.Echo.POST("/students", createStudents)
+	api.Echo.GET("/students", api.getStudents)
+	api.Echo.POST("/students", api.createStudents)
 
-	api.Echo.GET("/students:id", getStudent)
-	api.Echo.PUT("/students:id", updateStudent)
-	api.Echo.DELETE("/students:id", deleteStudent)
+	api.Echo.GET("/students:id", api.getStudent)
+	api.Echo.PUT("/students:id", api.updateStudent)
+	api.Echo.DELETE("/students:id", api.deleteStudent)
 }
 
 func (api *API) Start() error {
@@ -48,8 +51,8 @@ func (api *API) Start() error {
 
 // Gerenciar  a rota do servidor
 // Função para listar todos os estudantes
-func getStudents(c echo.Context) error {
-	students, err := db.GetStudents()
+func (api *API) getStudents(c echo.Context) error {
+	students, err := api.DB.GetStudents()
 	if err != nil {
 		return c.String(http.StatusNotFound, "Failed to get students")
 	}
@@ -57,12 +60,12 @@ func getStudents(c echo.Context) error {
 }
 
 // Função para cadastrar um novo estudante
-func createStudents(c echo.Context) error {
+func (api *API) createStudents(c echo.Context) error {
 	student := db.Students{}
 	if err := c.Bind(&student); err != nil {
 		return err
 	}
-	if err := db.AddStudent(student); err != nil {
+	if err := api.DB.AddStudent(student); err != nil {
 		return c.String(http.StatusInternalServerError, "Error to create student ")
 	}
 
@@ -70,19 +73,19 @@ func createStudents(c echo.Context) error {
 }
 
 // função para achar um determinado aluno
-func getStudent(c echo.Context) error {
+func (api *API) getStudent(c echo.Context) error {
 	id := c.Param("id")
 	return c.String(http.StatusOK, "Get student by id: "+id)
 }
 
 // Função para atualizar as informações de uma aluno
-func updateStudent(c echo.Context) error {
+func (api *API) updateStudent(c echo.Context) error {
 	id := c.Param("id")
 	return c.String(http.StatusOK, "Update student by id: "+id)
 }
 
 // Função para deletar um aluno
-func deleteStudent(c echo.Context) error {
+func (api *API) deleteStudent(c echo.Context) error {
 	id := c.Param("id")
 	return c.String(http.StatusOK, "Deletar student by id: "+id)
 }
