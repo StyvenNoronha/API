@@ -2,9 +2,12 @@ package api
 
 import (
 	"api/db"
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // Gerenciar  a rota do servidor
@@ -32,8 +35,18 @@ func (api *API) createStudents(c echo.Context) error {
 
 // função para achar um determinado aluno
 func (api *API) getStudent(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, "Get student by id: "+id)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil{
+		return c.String(http.StatusInternalServerError,"failed to get student id")
+	}
+	student, err:= api.DB.GetStudent(id)
+	if errors.Is(err, gorm.ErrRecordNotFound){
+		return c.String(http.StatusNotFound,"Student not found")
+	}
+	if err != nil{
+		return c.String(http.StatusNotFound,"server not found")
+	}
+	return c.JSON(http.StatusOK,student)
 }
 
 // Função para atualizar as informações de uma aluno

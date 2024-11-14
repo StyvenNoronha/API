@@ -50,10 +50,18 @@ func (s *StudentHandler) AddStudent(student Students) error {
 	}
 
 }
-
+//Função para pegar todos os estudantes
 func (s *StudentHandler) GetStudents() ([]Students, error) {
 	students := []Students{}
 
 	err := s.DB.Find(&students).Error
 	return students, err
+}
+
+//Função para pegar um estudante especifico
+func (s *StudentHandler) GetStudent(id int) (Students, error) {
+	var student Students
+	err := s.DB.First(&student, id)
+	
+	return student, err.Error
 }
