@@ -17,7 +17,9 @@ func (api *API) getStudents(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusNotFound, "Failed to get students")
 	}
-	return c.JSON(http.StatusOK, students)
+	listStudents := map[string][]schema.StudentResponse{"students": schema.NewResponse(students)}
+
+	return c.JSON(http.StatusOK, listStudents)
 }
 
 // Função para cadastrar um novo estudante
