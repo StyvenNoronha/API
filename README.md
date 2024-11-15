@@ -9,6 +9,7 @@ Routes
 - GET /students/:id - retorna um estudante
 - PUT /students/:id - atualiza um estudante
 - DELETE /students/:id - deleta um estudante
+- GET /students?active=<true/false> - lista de estudantes ativos ou não
 
 Informação de estuante:
 - name (string)

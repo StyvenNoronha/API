@@ -17,6 +17,19 @@ func (api *API) getStudents(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusNotFound, "Failed to get students")
 	}
+
+	//lista de estudantes ativos ou não
+	active:= c.QueryParam("active")
+	if active != ""{
+		ativo, err:= strconv.ParseBool(active)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "Invalid active value")
+		}
+		//método para filtrar os estudantes ativos ou não
+		students,err= api.DB.GetActiveStudents(ativo)
+
+	}
+
 	listStudents := map[string][]schema.StudentResponse{"students": schema.NewResponse(students)}
 
 	return c.JSON(http.StatusOK, listStudents)

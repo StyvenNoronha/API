@@ -54,6 +54,19 @@ func (s *StudentHandler) GetStudents() ([]schema.Students, error) {
 	return students, err
 }
 
+//função para ver se um estudante está ativo ou não
+
+func (s *StudentHandler) GetActiveStudents(active bool) ([]schema.Students, error) {
+	FilterStudents := []schema.Students{}
+	err := s.DB.Where("Active = ?", active).Find(&FilterStudents)
+	return FilterStudents, err.Error
+}
+
+
+
+
+
+
 //Função para pegar um estudante especifico
 func (s *StudentHandler) GetStudent(id int) (schema.Students, error) {
 	var student schema.Students
@@ -71,3 +84,5 @@ func (s *StudentHandler) UpdateStudent(Updatestudent schema.Students) error {
 func (s *StudentHandler) DeleteStudent(student schema.Students) error {
 	return s.DB.Delete(&student).Error
 }
+
+
