@@ -23,9 +23,9 @@ type Students struct {
 func Init() *gorm.DB {
 	//Criando um banco com o gorm usando o Sqlite
 	db, err := gorm.Open(sqlite.Open("students.db"), &gorm.Config{})
-	//Se der alguma erro entra no if
+	//Verificando se o banco foi criado
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Failded to initialize SQLite: %s", err.Error())
+		log.Fatal().Err(err).Msgf("Failed to initialize SQLite: %s", err.Error())
 	}
 
 	//Gerenciar  as migrates
@@ -33,13 +33,14 @@ func Init() *gorm.DB {
 
 	return db
 }
-
+// Função para criar um novo estudante
 func NewStudentHandler(db *gorm.DB) *StudentHandler {
 	return &StudentHandler{DB: db}
 }
 
 // Função para adicionar novo estudante
 func (s *StudentHandler) AddStudent(student Students) error {
+	//Criando um novo estudante
 	result := s.DB.Create(&student)
 	if result.Error != nil {
 		log.Error().Msg("Error to create student")
@@ -69,4 +70,9 @@ func (s *StudentHandler) GetStudent(id int) (Students, error) {
 //Função para atualizar um estudante no banco de dados
 func (s *StudentHandler) UpdateStudent(Updatestudent Students) error {
 	return s.DB.Save(&Updatestudent).Error
+}
+
+//Função para deletar um estudante no banco de dados
+func (s *StudentHandler) DeleteStudent(student Students) error {
+	return s.DB.Delete(&student).Error
 }

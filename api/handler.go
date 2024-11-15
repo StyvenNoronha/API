@@ -36,37 +36,25 @@ func (api *API) createStudents(c echo.Context) error {
 // função para achar um determinado aluno
 func (api *API) getStudent(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil{
-		return c.String(http.StatusInternalServerError,"failed to get student id")
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "failed to get student id")
 	}
-	student, err:= api.DB.GetStudent(id)
-	if errors.Is(err, gorm.ErrRecordNotFound){
-		return c.String(http.StatusNotFound,"Student not found")
+	student, err := api.DB.GetStudent(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.String(http.StatusNotFound, "Student not found")
 	}
-	if err != nil{
-		return c.String(http.StatusNotFound,"server not found")
+	if err != nil {
+		return c.String(http.StatusNotFound, "server not found")
 	}
-	return c.JSON(http.StatusOK,student)
+	return c.JSON(http.StatusOK, student)
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Função para atualizar as informações de uma aluno
 func (api *API) updateStudent(c echo.Context) error {
 	// ela transforma o id em um inteiro
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil{
-		return c.String(http.StatusInternalServerError,"failed to get student id")
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "failed to get student id")
 	}
 	// Criando um novo estudante
 	receiveStudent := db.Students{}
@@ -75,59 +63,63 @@ func (api *API) updateStudent(c echo.Context) error {
 	}
 
 	// Atualizando o estudante
-	updateStudent, err:= api.DB.GetStudent(id)
-	if errors.Is(err, gorm.ErrRecordNotFound){
-		return c.String(http.StatusNotFound,"Student not found")
+	updateStudent, err := api.DB.GetStudent(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.String(http.StatusNotFound, "Student not found")
 	}
-	if err != nil{
-		return c.String(http.StatusNotFound,"server not found")
+	if err != nil {
+		return c.String(http.StatusNotFound, "server not found")
+	}
+	/// Atualizando o estudante
+	student := updateStudentInfo(receiveStudent, updateStudent)
+
+	if err := api.DB.UpdateStudent(student); err != nil {
+		return c.String(http.StatusInternalServerError, "Error to update student")
 	}
 
-	student:= updateStudentInfo(receiveStudent,updateStudent)
-
-	if err:= api.DB.UpdateStudent(student); err != nil{
-		return c.String(http.StatusInternalServerError,"Error to update student")
-	}
-
-	return c.JSON(http.StatusOK,student)
+	return c.JSON(http.StatusOK, student)
 }
 
 // Função para atualizar as informações de uma aluno
-func updateStudentInfo(receiveStudent,updateStudent db.Students) db.Students {
-	if receiveStudent.Name != ""{
+func updateStudentInfo(receiveStudent, updateStudent db.Students) db.Students {
+	// Atualizando o estudante
+	if receiveStudent.Name != "" {
 		updateStudent.Name = receiveStudent.Name
 	}
-	if receiveStudent.Email != ""{
+	if receiveStudent.Email != "" {
 		updateStudent.Email = receiveStudent.Email
 	}
-	if receiveStudent.CPF > 0{
+	if receiveStudent.CPF > 0 {
 		updateStudent.CPF = receiveStudent.CPF
 	}
-	if receiveStudent.Age > 0{
+	if receiveStudent.Age > 0 {
 		updateStudent.Age = receiveStudent.Age
 	}
-	if receiveStudent.Active != updateStudent.Active{
+	if receiveStudent.Active != updateStudent.Active {
 		updateStudent.Active = receiveStudent.Active
 	}
 	return updateStudent
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Função para deletar um aluno
 func (api *API) deleteStudent(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, "Deletar student by id: "+id)
+	// ela transforma o id em um inteiro
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "failed to get student id")
+	}
+	// Criando um novo estudante
+	student, err := api.DB.GetStudent(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.String(http.StatusNotFound, "Student not found")
+	}
+	if err != nil {
+		return c.String(http.StatusNotFound, "server not found")
+	}
+	/// Deletando o estudante
+	if err := api.DB.DeleteStudent(student); err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to delete student")
+	}
+
+	return c.JSON(http.StatusOK, student)
 }
