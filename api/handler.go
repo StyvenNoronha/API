@@ -1,7 +1,7 @@
 package api
 
 import (
-	"api/db"
+	"api/schema"
 	"errors"
 	"net/http"
 	"strconv"
@@ -22,7 +22,7 @@ func (api *API) getStudents(c echo.Context) error {
 
 // Função para cadastrar um novo estudante
 func (api *API) createStudents(c echo.Context) error {
-	student := db.Students{}
+	student := schema.Students{}
 	if err := c.Bind(&student); err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (api *API) updateStudent(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "failed to get student id")
 	}
 	// Criando um novo estudante
-	receiveStudent := db.Students{}
+	receiveStudent := schema.Students{}
 	if err := c.Bind(&receiveStudent); err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (api *API) updateStudent(c echo.Context) error {
 }
 
 // Função para atualizar as informações de uma aluno
-func updateStudentInfo(receiveStudent, updateStudent db.Students) db.Students {
+func updateStudentInfo(receiveStudent, updateStudent schema.Students) schema.Students {
 	// Atualizando o estudante
 	if receiveStudent.Name != "" {
 		updateStudent.Name = receiveStudent.Name

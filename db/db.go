@@ -5,20 +5,15 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"api/schema"
+	
 )
 
 type StudentHandler struct {
 	DB *gorm.DB
 }
 
-type Students struct {
-	gorm.Model
-	Name   string `json:"name"`
-	CPF    int    `json:"cpf"`
-	Email  string `json:"email"`
-	Age    int    `json:"age"`
-	Active bool   `json: "active"`
-}
+
 
 func Init() *gorm.DB {
 	//Criando um banco com o gorm usando o Sqlite
@@ -29,7 +24,7 @@ func Init() *gorm.DB {
 	}
 
 	//Gerenciar  as migrates
-	db.AutoMigrate(&Students{})
+	db.AutoMigrate(&schema.Students{})
 
 	return db
 }
@@ -39,7 +34,7 @@ func NewStudentHandler(db *gorm.DB) *StudentHandler {
 }
 
 // Função para adicionar novo estudante
-func (s *StudentHandler) AddStudent(student Students) error {
+func (s *StudentHandler) AddStudent(student schema.Students) error {
 	//Criando um novo estudante
 	result := s.DB.Create(&student)
 	if result.Error != nil {
@@ -52,27 +47,27 @@ func (s *StudentHandler) AddStudent(student Students) error {
 
 }
 //Função para pegar todos os estudantes
-func (s *StudentHandler) GetStudents() ([]Students, error) {
-	students := []Students{}
+func (s *StudentHandler) GetStudents() ([]schema.Students, error) {
+	students := []schema.Students{}
 
 	err := s.DB.Find(&students).Error
 	return students, err
 }
 
 //Função para pegar um estudante especifico
-func (s *StudentHandler) GetStudent(id int) (Students, error) {
-	var student Students
+func (s *StudentHandler) GetStudent(id int) (schema.Students, error) {
+	var student schema.Students
 	err := s.DB.First(&student, id)
 	
 	return student, err.Error
 }
 
 //Função para atualizar um estudante no banco de dados
-func (s *StudentHandler) UpdateStudent(Updatestudent Students) error {
+func (s *StudentHandler) UpdateStudent(Updatestudent schema.Students) error {
 	return s.DB.Save(&Updatestudent).Error
 }
 
 //Função para deletar um estudante no banco de dados
-func (s *StudentHandler) DeleteStudent(student Students) error {
+func (s *StudentHandler) DeleteStudent(student schema.Students) error {
 	return s.DB.Delete(&student).Error
 }
