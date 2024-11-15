@@ -43,7 +43,7 @@ func (api *API) createStudents(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error to create student ")
 	}
 
-	return c.String(http.StatusOK, "Create students ")
+	return c.JSON(http.StatusOK, student)
 }
 
 // função para achar um determinado aluno
