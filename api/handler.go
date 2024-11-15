@@ -22,10 +22,23 @@ func (api *API) getStudents(c echo.Context) error {
 
 // Função para cadastrar um novo estudante
 func (api *API) createStudents(c echo.Context) error {
-	student := schema.Students{}
-	if err := c.Bind(&student); err != nil {
+	studentReq := StudentRequest{}
+	if err := c.Bind(&studentReq); err != nil {
 		return err
 	}
+
+	if err := studentReq.Validate(); err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	student := schema.Students{
+		Name:   studentReq.Name,
+		CPF:    studentReq.CPF,
+		Email:  studentReq.Email,
+		Age: studentReq.Age,
+		Active: *studentReq.Active,
+	}
+
 	if err := api.DB.AddStudent(student); err != nil {
 		return c.String(http.StatusInternalServerError, "Error to create student ")
 	}
