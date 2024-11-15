@@ -65,3 +65,8 @@ func (s *StudentHandler) GetStudent(id int) (Students, error) {
 	
 	return student, err.Error
 }
+
+//Função para atualizar um estudante no banco de dados
+func (s *StudentHandler) UpdateStudent(Updatestudent Students) error {
+	return s.DB.Save(&Updatestudent).Error
+}

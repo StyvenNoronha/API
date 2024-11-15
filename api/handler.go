@@ -49,11 +49,82 @@ func (api *API) getStudent(c echo.Context) error {
 	return c.JSON(http.StatusOK,student)
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // Função para atualizar as informações de uma aluno
 func (api *API) updateStudent(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, "Update student by id: "+id)
+	// ela transforma o id em um inteiro
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil{
+		return c.String(http.StatusInternalServerError,"failed to get student id")
+	}
+	// Criando um novo estudante
+	receiveStudent := db.Students{}
+	if err := c.Bind(&receiveStudent); err != nil {
+		return err
+	}
+
+	// Atualizando o estudante
+	updateStudent, err:= api.DB.GetStudent(id)
+	if errors.Is(err, gorm.ErrRecordNotFound){
+		return c.String(http.StatusNotFound,"Student not found")
+	}
+	if err != nil{
+		return c.String(http.StatusNotFound,"server not found")
+	}
+
+	student:= updateStudentInfo(receiveStudent,updateStudent)
+
+	if err:= api.DB.UpdateStudent(student); err != nil{
+		return c.String(http.StatusInternalServerError,"Error to update student")
+	}
+
+	return c.JSON(http.StatusOK,student)
 }
+
+// Função para atualizar as informações de uma aluno
+func updateStudentInfo(receiveStudent,updateStudent db.Students) db.Students {
+	if receiveStudent.Name != ""{
+		updateStudent.Name = receiveStudent.Name
+	}
+	if receiveStudent.Email != ""{
+		updateStudent.Email = receiveStudent.Email
+	}
+	if receiveStudent.CPF > 0{
+		updateStudent.CPF = receiveStudent.CPF
+	}
+	if receiveStudent.Age > 0{
+		updateStudent.Age = receiveStudent.Age
+	}
+	if receiveStudent.Active != updateStudent.Active{
+		updateStudent.Active = receiveStudent.Active
+	}
+	return updateStudent
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Função para deletar um aluno
 func (api *API) deleteStudent(c echo.Context) error {
