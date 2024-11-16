@@ -1,0 +1,93 @@
+definitions:
+  schema.StudentResponse:
+    properties:
+      active:
+        type: boolean
+      age:
+        type: integer
+      cpf:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /students:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista de todos os estudantes
+      parameters:
+      - description: Filtrar por ativo
+        in: query
+        name: active
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.StudentResponse'
+      summary: Listar todos os estudantes
+      tags:
+      - students
+    post:
+      consumes:
+      - application/json
+      description: Cadastra um novo estudante
+      produces:
+      - application/json
+      responses: {}
+      summary: Cadastrar um novo estudante
+      tags:
+      - students
+  /students/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deleta um estudante
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.StudentResponse'
+      summary: Deletar um estudante
+      tags:
+      - students
+    get:
+      consumes:
+      - application/json
+      description: Retorna um estudante
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.StudentResponse'
+      summary: Buscar um estudante
+      tags:
+      - students
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um estudante
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.StudentResponse'
+      summary: Atualizar um estudante
+      tags:
+      - students
+swagger: "2.0"

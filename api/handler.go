@@ -8,10 +8,21 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	
 )
 
 // Gerenciar  a rota do servidor
 // Função para listar todos os estudantes
+
+// getStudents godoc
+// @Summary Listar todos os estudantes
+// @Description Retorna uma lista de todos os estudantes
+// @Tags students
+// @Accept json
+// @Produce json
+// @Param active query string false "Filtrar por ativo"
+// @Success 200 {object} schema.StudentResponse
+// @Router /students [get]
 func (api *API) getStudents(c echo.Context) error {
 	students, err := api.DB.GetStudents()
 	if err != nil {
@@ -19,14 +30,14 @@ func (api *API) getStudents(c echo.Context) error {
 	}
 
 	//lista de estudantes ativos ou não
-	active:= c.QueryParam("active")
-	if active != ""{
-		ativo, err:= strconv.ParseBool(active)
+	active := c.QueryParam("active")
+	if active != "" {
+		ativo, err := strconv.ParseBool(active)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "Invalid active value")
 		}
 		//método para filtrar os estudantes ativos ou não
-		students,err= api.DB.GetActiveStudents(ativo)
+		students, err = api.DB.GetActiveStudents(ativo)
 
 	}
 
@@ -36,6 +47,13 @@ func (api *API) getStudents(c echo.Context) error {
 }
 
 // Função para cadastrar um novo estudante
+// @Summary Cadastrar um novo estudante
+// @Description Cadastra um novo estudante
+// @Tags students
+// @Accept json
+// @Produce json
+// @Sucess 200 {object} schema.StudentResponse
+// @Router /students [post]
 func (api *API) createStudents(c echo.Context) error {
 	studentReq := StudentRequest{}
 	if err := c.Bind(&studentReq); err != nil {
@@ -50,7 +68,7 @@ func (api *API) createStudents(c echo.Context) error {
 		Name:   studentReq.Name,
 		CPF:    studentReq.CPF,
 		Email:  studentReq.Email,
-		Age: studentReq.Age,
+		Age:    studentReq.Age,
 		Active: *studentReq.Active,
 	}
 
@@ -62,6 +80,14 @@ func (api *API) createStudents(c echo.Context) error {
 }
 
 // função para achar um determinado aluno
+// getStudent godoc
+// @Summary Buscar um estudante
+// @Description Retorna um estudante
+// @Tags students
+// @Accept json
+// @Produce json
+// @Success 200 {object} schema.StudentResponse
+// @Router /students/{id} [get]
 func (api *API) getStudent(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -78,6 +104,14 @@ func (api *API) getStudent(c echo.Context) error {
 }
 
 // Função para atualizar as informações de uma aluno
+// updateStudent godoc
+// @Summary Atualizar um estudante
+// @Description Atualiza um estudante
+// @Tags students
+// @Accept json
+// @Produce json
+// @Success 200 {object} schema.StudentResponse
+// @Router /students/{id} [put]
 func (api *API) updateStudent(c echo.Context) error {
 	// ela transforma o id em um inteiro
 	id, err := strconv.Atoi(c.Param("id"))
@@ -130,6 +164,14 @@ func updateStudentInfo(receiveStudent, updateStudent schema.Students) schema.Stu
 }
 
 // Função para deletar um aluno
+// deleteStudent godoc
+// @Summary Deletar um estudante
+// @Description Deleta um estudante
+// @Tags students
+// @Accept json
+// @Produce json
+// @Success 200 {object} schema.StudentResponse
+// @Router /students/{id} [delete]
 func (api *API) deleteStudent(c echo.Context) error {
 	// ela transforma o id em um inteiro
 	id, err := strconv.Atoi(c.Param("id"))
